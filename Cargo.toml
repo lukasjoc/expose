@@ -1,9 +1,19 @@
 [package]
 name = "expose"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2018"
+license = "Apache-2.0 License"
+authors = ["lukasjoc <jochamlu@gmail.com>"]
+readme = "readme"
+description = "Listen for File Changes"
+repository = "https://github.com/lukasjoc/expose"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[build-dependencies]
+clap = "2"
+
+[[bin]]
+name = "expose"
 
 [dependencies]
-notify = "4.0.12"
+notify = "4"
+clap = { version = "2", default-features = false }

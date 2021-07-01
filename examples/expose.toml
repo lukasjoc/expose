@@ -1,0 +1,17 @@
+# Expose configuration file options
+# Copy to .config/expose to modify default (as is here in document)
+# Expose will watch this file in realtime. No restart needed!
+#
+
+# Parsing Options:
+# md_support = true # false
+# pdf_support = true #
+#
+#
+
+# Watching Options:
+# explicit_watch = [
+# # Emty
+# ]
+#
+

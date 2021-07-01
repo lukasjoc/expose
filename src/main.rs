@@ -1,27 +1,25 @@
-extern crate notify;
+use std::env;
+use std::path::PathBuf;
 
-use notify::{Watcher, RecursiveMode, RawEvent, raw_watcher};
-use std::sync::mpsc::channel;
+mod cmd;
+mod watch;
 
+// TODO: watch for expose.toml config file
+// TODO: take default one as default config
+// Eval if we need this even !
+//
 fn main() {
-    // Create a channel to receive the events.
-    let (tx, rx) = channel();
+    let matches = cmd::build_cmd().get_matches();
 
-    // Create a watcher object, delivering raw events.
-    // The notification back-end is selected based on the platform.
-    let mut watcher = raw_watcher(tx).unwrap();
+    let path = match matches.value_of("path").unwrap() {
+        "." => env::current_dir().unwrap(),
+        other => PathBuf::from(other)
+            .canonicalize()
+            .unwrap_or_else(|_| panic!("Cannot start watching file: {}", other)),
+    };
 
-    // Add a path to be watched. All files and directories at that path and
-    // below will be monitored for changes.
-    watcher.watch("/tmp/testfile", RecursiveMode::Recursive).unwrap();
-
-    loop {
-        match rx.recv() {
-           Ok(RawEvent{path: Some(path), op: Ok(op), cookie}) => {
-               println!("{:?} {:?} ({:?})", op, path, cookie)
-           },
-           Ok(event) => println!("broken event: {:?}", event),
-           Err(e) => println!("watch error: {:?}", e),
-        }
-    }
+    println!("path should be string {:?}", path);
+    // TODO: Signals Handling
+    //
+    watch::changes(path);
 }
