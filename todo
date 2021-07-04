@@ -1,0 +1,27 @@
+provide api for web app
+ - polls
+
+Arch:
+
+Watcher <|-|> Web Interface
+
+Watcher  --path $PWE/
+
+Watcher:
+(
+   - file type (dir, simlink, file, extensions, file type text file etc. )
+   - file size
+   - file permissions
+   - file meta data
+)
+
+API HTTP /watch ------------------------> get news ->  json -> update local structure
+
+API /watch -> BAUM
+socket /watch -> neuen naum
+
+http://localhost:13579
+
+Using Server-sent events:
+Single Duplex Conenction to the API 
+

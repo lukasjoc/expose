@@ -1,6 +1,6 @@
 use std::env;
 use std::path::PathBuf;
-
+use str::parse;
 mod cmd;
 mod watch;
 
@@ -18,8 +18,16 @@ fn main() {
             .unwrap_or_else(|_| panic!("Cannot start watching file: {}", other)),
     };
 
-    println!("path should be string {:?}", path);
-    // TODO: Signals Handling
-    //
-    watch::changes(path);
+    let interval = matches
+        .value_of("interval")
+        .unwrap()
+        .parse::<u64>()
+        .unwrap();
+
+    let port = matches.value_of("port").unwrap().parse::<u64>().unwrap();
+
+    let host = matches.value_of("host").unwrap();
+
+    // TODO: Signals Handling, Watching
+    watch::changes(path.display().to_string(), interval, port, host);
 }
