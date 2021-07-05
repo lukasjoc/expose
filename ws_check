@@ -1,0 +1,7 @@
+#!/bin/bash
+
+curl -X POST 'http://localhost:8000/ws' \
+  -H 'Content-Type: application/json' \
+  -d '{ "user_id": 1 }' \
+  {"url":"ws://127.0.0.1:8000/ws/625ac78b88e047a1bc7b3f8459702078"}
+
