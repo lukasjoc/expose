@@ -1,52 +1,6 @@
-provide api for web app
- - polls
-
-Arch:
-
-Watcher <|-|> Web Interface
-
-Watcher  --path $PWE/
-
-Watcher:
-(
-   - file type (dir, simlink, file, extensions, file type text file etc. )
-   - file size
-   - file permissions
-   - file meta data
-)
-
-API HTTP /watch ------------------------> get news ->  json -> update local structure
-
-API /watch -> BAUM
-socket /watch -> neuen naum
-
-http://localhost:13579
-
-Using Server-sent events:
-Single Duplex Conenction to the API 
-
-File Lookup for update/insertion
-
-path /tmp/test/test
-
-FILE TREE based on hahsMap
-/tmp
-/tmp/test
-/tmp/test/test -> HashMap{"/tmp/test/test":}
-Hashmap<str: FileInfo>  -> /path/path
-
-
-File notifier <data structure-> http ->/notify websocket <-> web interface
-
-/notify -> updated to delay structure
-/parts-> just the updates as a substructure
-
-
-TODO:
-path to subpaths
-
-/tmp/test -> /tmp, /tmp/test
-watch /tmp/
-
-
+TODOS:
+- build tree via path
+- update tree continuesly
+- deliver tree as service
+- connect service via websocket
 
