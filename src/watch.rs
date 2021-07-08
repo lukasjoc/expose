@@ -1,12 +1,6 @@
-extern crate notify;
-// use notify::{raw_watcher, RawEvent, RecursiveMode, Watcher};
 use std::collections::HashMap;
 use std::fs::Metadata;
-// use std::io;
-use std::ffi::OsStr;
-use std::path::Path;
-// use std::path::PathBuf;
-// use std::sync::mpsc::channel;
+use std::path::PathBuf;
 use std::time::SystemTime;
 use walkdir::WalkDir;
 
@@ -14,11 +8,10 @@ use walkdir::WalkDir;
 // a file in the tree
 // contains info about file, type, size, content ...
 #[derive(Debug)]
-struct FileInfo<'a> {
-    path: &'a OsStr,
+struct FileInfo {
+    path: PathBuf,
     is_file: bool,
     is_dir: bool,
-    //     is_simlink: bool,
     file_size: u64,
     file_mode: std::fs::Permissions,
     modified: SystemTime,
@@ -26,10 +19,10 @@ struct FileInfo<'a> {
     created: SystemTime,
 }
 
-impl<'a> FileInfo<'a> {
-    pub fn new(path: &'a OsStr, entry: Metadata) -> Self {
+impl FileInfo {
+    pub fn new(path: PathBuf, entry: Metadata) -> Self {
         FileInfo {
-            path: path,
+            path,
             is_file: entry.is_file(),
             is_dir: entry.is_dir(),
             //             is_simlink: entry.is_link(),
@@ -44,23 +37,27 @@ impl<'a> FileInfo<'a> {
 
 // This is the files tree
 #[derive(Debug)]
-pub struct Files<'a> {
-    files: HashMap<&'a OsStr, FileInfo<'a>>,
+pub struct Files {
+    files: HashMap<&'static str, FileInfo>,
     // TODO: meta data about the hashmap
 }
 
-impl<'a> Files<'a> {
+impl Files {
     // generate new files struct recursively based on the path given to it
     // this generates a static implementation of the
     // contents in the given path and subpaths
+    // AS ALWAYS: Fix the syntax later with rust
+    pub fn collect(&mut self) -> HashMap<&'static str, FileInfo> {
+        return self.files;
+    }
+
     pub fn new(path: &str) -> Self {
-        let mut path_tree: HashMap<&OsStr, FileInfo> = HashMap::new();
+        let mut path_tree: HashMap<&'static str, FileInfo> = HashMap::new();
         for entry in WalkDir::new(path) {
             let entry = entry.unwrap();
-            for meta in std::fs::metadata(entry.path()) {
-                path_tree.insert(OsStr::new("/"), FileInfo::new(OsStr::new("/"), meta));
-
-                // path_tree.insert(entry.unwrap(), FileInfo::new(entry_file_name, meta));
+            for meta in std::fs::metadata(entry.path().to_owned()) {
+                let path_key = entry.path().display().to_string().as_ref();
+                path_tree.insert(path_key, FileInfo::new(entry.path().to_owned(), meta));
             }
         }
         Files { files: path_tree }

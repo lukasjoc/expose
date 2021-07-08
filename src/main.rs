@@ -1,5 +1,5 @@
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use watch::Files;
 mod cmd;
 mod watch;
@@ -20,8 +20,10 @@ fn main() {
     // HahsMap<"/tmp/test/test", FileInfo{path: '/tmp/test/test', file_type: 'dir', ''}>
     //
     // to_string is not nice.. TODO: refac later
-    let files_tree = watch::Files::new(path.to_str().unwrap());
-    // -> files_tree
-    //
-    println!("{:?}", files_tree);
+    let files_tree = Files::new(path.to_str().unwrap()).collect();
+
+    println!(
+        "{:?}",
+        files_tree // files_tree.get("/Users/jochamlu/fun/expose/testdocs/Kultur_der_Digitalita\u{308}t.epub")
+    )
 }
