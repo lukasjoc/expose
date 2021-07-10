@@ -5,3 +5,9 @@
 tags
 testdocs/
 test/
+
+
+# Added by cargo
+
+/target
+a/
