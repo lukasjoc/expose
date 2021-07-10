@@ -8,6 +8,7 @@ use clap::{
 };
 
 use std::collections::HashMap;
+use std::default::Default;
 use std::env;
 use std::ffi::OsString;
 use std::fs::{FileType, Metadata};
@@ -29,6 +30,7 @@ pub struct FileNode {
     created: SystemTime,
 }
 
+// a standard M length
 const STD_BYTE: u64 = 1024;
 
 impl FileNode {
@@ -56,25 +58,26 @@ impl FileNode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct FileNodes {
     // the file tree with key, value (path, entryData)
     // eg /tmp/test : {name: "/tmp/test", isDir: true}
     nodes: HashMap<String, FileNode>,
-    // Meta Data about the Tree
-    // nodes_count: u64
-    // nodes_size:  u64
+    node_count: usize,
+    nodes_size_8: u64,
 }
 
 impl FileNodes {
     pub fn new(path: &str) -> Self {
-        let mut nodes: HashMap<String, FileNode> = HashMap::new();
+        let mut f: FileNodes = Default::default();
+        let mut nodes = HashMap::new();
         for entry in WalkDir::new(path) {
             let entry = entry.unwrap();
-            let path_key = entry.path().display().to_string(); //.as_ref();
-            nodes.insert(path_key, FileNode::new(entry.to_owned()));
+            let path = entry.path().display().to_string();
+            nodes.insert(path, FileNode::new(entry.to_owned()));
         }
-        FileNodes { nodes }
+        f.nodes = nodes;
+        f
     }
 }
 
@@ -102,5 +105,5 @@ fn main() {
 
     let file_nodes = FileNodes::new(path.to_str().unwrap());
 
-    println!("given : {:?} {:?}", path, file_nodes.nodes);
+    println!("given : {:?} {:?}", path, file_nodes);
 }
