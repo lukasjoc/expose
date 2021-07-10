@@ -1,5 +1,5 @@
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use watch::Files;
 mod cmd;
 mod watch;
@@ -24,6 +24,6 @@ fn main() {
 
     println!(
         "{:?}",
-        files_tree // files_tree.get("/Users/jochamlu/fun/expose/testdocs/Kultur_der_Digitalita\u{308}t.epub")
+        files_tree.get("/Users/jochamlu/fun/expose/testdocs/Kultur_der_Digitalita\u{308}t.epub")
     )
 }

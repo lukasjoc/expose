@@ -37,22 +37,22 @@ impl FileInfo {
 
 // This is the files tree
 #[derive(Debug)]
-pub struct Files {
-    files: HashMap<&'static str, FileInfo>,
+pub struct Files<'a> {
+    files: HashMap<&'a str, FileInfo>,
     // TODO: meta data about the hashmap
 }
 
-impl Files {
+impl<'a> Files<'a> {
     // generate new files struct recursively based on the path given to it
     // this generates a static implementation of the
     // contents in the given path and subpaths
     // AS ALWAYS: Fix the syntax later with rust
-    pub fn collect(&mut self) -> HashMap<&'static str, FileInfo> {
+    pub fn collect(self) -> HashMap<&'a str, FileInfo> {
         return self.files;
     }
 
     pub fn new(path: &str) -> Self {
-        let mut path_tree: HashMap<&'static str, FileInfo> = HashMap::new();
+        let mut path_tree: HashMap<&'a str, FileInfo> = HashMap::new();
         for entry in WalkDir::new(path) {
             let entry = entry.unwrap();
             for meta in std::fs::metadata(entry.path().to_owned()) {
