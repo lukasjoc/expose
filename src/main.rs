@@ -31,18 +31,12 @@ pub struct FileNode {
 }
 
 // a standard M length
-const STD_BYTE: u64 = 1024;
+// const STD_BYTE: u64 = 1024;
 
 impl FileNode {
     pub fn new(d: walkdir::DirEntry) -> Self {
         let meta: Metadata = d.metadata().unwrap();
         let ft: FileType = meta.file_type();
-
-        let mut file_size = meta.len();
-        if file_size >= STD_BYTE {
-            file_size = file_size / STD_BYTE / STD_BYTE
-        }
-
         FileNode {
             path: d.path().to_owned(),
             name: d.file_name().to_owned(),
@@ -53,7 +47,7 @@ impl FileNode {
             modified: meta.modified().unwrap(),
             accessed: meta.accessed().unwrap(),
             created: meta.created().unwrap(),
-            file_size,
+            file_size: meta.len(),
         }
     }
 }
@@ -63,8 +57,8 @@ pub struct FileNodes {
     // the file tree with key, value (path, entryData)
     // eg /tmp/test : {name: "/tmp/test", isDir: true}
     nodes: HashMap<String, FileNode>,
-    node_count: usize,
-    nodes_size_8: u64,
+    //node_count: usize,
+    //nodes_size: u64,
 }
 
 impl FileNodes {
