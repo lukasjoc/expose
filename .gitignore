@@ -1,7 +1,8 @@
-/target
 *~
 [._]*.sw[a-p]
 .netrwhist
 .DS_Store
 tags
 testdocs/
+test/
+target/
