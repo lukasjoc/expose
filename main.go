@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 const cmdName = "expose"
@@ -30,7 +32,7 @@ type FileNode struct {
 	IsDir  bool
 	IsFile bool
 	IsLink bool
-	Size/*u*/ int64
+	Size   int64
 }
 
 // FileNodes is the tree struct of file nodes of a given path
@@ -42,15 +44,8 @@ type FileNodes struct {
 	Nodes map[string]*FileNode
 
 	// Meta Data about the Tree
-	NodesCount uint64
-	NodesSize  uint64 // byte/1024/1024
-}
-
-func NewNodes() *FileNodes {
-	var f FileNodes
-	f.Nodes = make(map[string]*FileNode)
-	return &f
-
+	// NodesCount uint64
+	// NodesSize  uint64 // byte/1024/1024
 }
 
 // Create creates a FileNode Tree
@@ -77,17 +72,6 @@ func (f *FileNodes) Create(path string) (*FileNodes, error) {
 
 func main() {
 	flag.Parse()
-
-	// 	flag.Usage = func() {
-	// 		fmt.Fprintf(os.Stderr, "Usage: \t")
-	// 		fmt.Fprintf(os.Stderr, "\t%s:\n", cmdName)
-	// 		flag.VisitAll(func(f *flag.Flag) {
-	// 			fmt.Fprintf(os.Stderr, "TEST: %v\n", f.Usage) // f.Name, f.Value
-	// 		})
-	// 	}
-
-	// 	flagset := make(map[string]bool)
-	// 	if flagset["path"] && flagset["walkRoot"] {
 	if path != nil {
 		nodes := &FileNodes{}
 		nodes.Nodes = make(map[string]*FileNode)
@@ -97,30 +81,13 @@ func main() {
 			return
 		}
 
-		for k, v := range n.Nodes {
-			fmt.Printf("K: %v | V: %v", k, v)
+		watcher, err := fsnotify.NewWatcher()
+		if err != nil {
+			fmt.Println("ERROR", err)
 		}
 
-		//{ K: src/watch.go
-		//| V: &{src/watch.go
-		//			 watch.go
-		//			-rw-r--r--
-		//			2021-07-10 14:44:54.50443613 +0200 CEST
-		//			false
-		//			true
-		//			false
-		//			0
-		//	}
+		for path, filedata := range n.Nodes {
 
-		// fmt.Printf("Nodes for %s: \n\n%v\n", *path, n)
+		}
 	}
-	// 	} else {
-	// 		// flag.Usage()
-	// 		fmt.Fprintf(os.Stderr, "Usage: \t")
-	// 		fmt.Fprintf(os.Stderr, "\t%s:\n", cmdName)
-	// 		flag.VisitAll(func(f *flag.Flag) {
-	// 			fmt.Fprintf(os.Stderr, "TEST: %v\n", f.Usage) // f.Name, f.Value
-	// 		})
-	// 	}
-	//
 }
