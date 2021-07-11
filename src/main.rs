@@ -69,7 +69,8 @@ impl FileNodes {
         let mut nodes = HashMap::new();
         for entry in WalkDir::new(path) {
             let entry = entry.unwrap();
-            if !ignore.is_match(entry.path().display().to_string().as_ref()) {
+
+            if !ignore.is_match(entry.file_name().to_str().unwrap()) {
                 let path = entry.path().display().to_string();
                 nodes.insert(path, FileNode::new(entry.to_owned()));
             } else {
@@ -94,7 +95,7 @@ fn main() {
             Arg::with_name("path")
                 .short("p")
                 .long("path")
-                .default_value(".")
+                .required(true)
                 .takes_value(true)
                 .help("Path to file or dir to keep watch in"),
         )
