@@ -64,11 +64,14 @@ pub struct FileNodes {
 }
 
 impl FileNodes {
-    pub fn new(path: &str, ignore: regex::Regex) -> Self {
+    pub fn new(path: &str, ignore: regex::Regex) -> Result<FileNodes, walkdir::Error> {
         let mut f: FileNodes = Default::default();
         let mut nodes = HashMap::new();
-        for entry in WalkDir::new(path) {
-            let entry = entry.unwrap();
+        for wd_e in WalkDir::new(path) {
+            let entry = match wd_e {
+                Ok(entry) => entry,
+                Err(err) => return Err(err),
+            };
 
             if !ignore.is_match(entry.file_name().to_str().unwrap()) {
                 let path = entry.path().display().to_string();
@@ -81,7 +84,7 @@ impl FileNodes {
             }
         }
         f.nodes = nodes;
-        f
+        Ok(f)
     }
 }
 
@@ -97,7 +100,7 @@ fn main() {
                 .long("path")
                 .required(true)
                 .takes_value(true)
-                .help("Path to file or dir to keep watch in"),
+                .help("Path to dir or file to watch all desired contents recursively"),
         )
         .arg(
             Arg::with_name("ignore")
@@ -120,9 +123,14 @@ fn main() {
         pattern => Regex::new(pattern).unwrap(),
     };
 
-    println!("{:?}", ignore);
-    let file_nodes = FileNodes::new(path.to_str().unwrap(), ignore);
-    println!("given : {:?} {:?}", path, file_nodes);
+    // we have nodes from path?
+    let nodes = match FileNodes::new(path.to_str().unwrap(), ignore) {
+        Ok(nodes) => {
+            println!("given : {:?} {:#?}", path, nodes)
+        }
+        Err(err) => eprintln!("could not unpack certain Node/s: Err: {:?}", err),
+    };
+    nodes
 }
 
 // TODO: write tests

@@ -23,8 +23,6 @@ codegen-units = 1
 [dependencies]
 clap = { version = "2", default-features = false }
 notify = "4"
-ws = "0.9"
-ctrlc = "3"
 walkdir = "2"
-regex = "1.5"
+regex = "1"
 
