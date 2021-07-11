@@ -1,3 +1,5 @@
+extern crate notify;
+
 use clap::{
     crate_authors, //
     crate_description,
@@ -7,7 +9,12 @@ use clap::{
     AppSettings,
     Arg,
 };
-
+use notify::{
+    raw_watcher, //
+    RawEvent,
+    RecursiveMode,
+    Watcher,
+};
 use regex::Regex;
 use std::collections::HashMap;
 use std::default::Default;
@@ -15,6 +22,7 @@ use std::env;
 use std::ffi::OsString;
 use std::fs::{FileType, Metadata};
 use std::path::PathBuf;
+use std::sync::mpsc::channel;
 use std::time::SystemTime;
 use walkdir::WalkDir;
 
@@ -58,6 +66,7 @@ impl FileNode {
 pub struct FileNodes {
     // the file tree with key, value (path, entryData)
     // eg /tmp/test : {name: "/tmp/test", isDir: true}
+    // root: OsString,
     nodes: HashMap<String, FileNode>,
     //node_count: usize,
     //nodes_size: u64,
@@ -72,7 +81,6 @@ impl FileNodes {
                 Ok(entry) => entry,
                 Err(err) => return Err(err),
             };
-
             if !ignore.is_match(entry.file_name().to_str().unwrap()) {
                 let path = entry.path().display().to_string();
                 nodes.insert(path, FileNode::new(entry.to_owned()));
@@ -86,6 +94,14 @@ impl FileNodes {
         f.nodes = nodes;
         Ok(f)
     }
+
+    // standard nodes watcher giving events
+    //pub fn watcher(&mut self) -> RawEvent {
+    //    let (a, b) = channel();
+    //    let mut watcher = raw_watcher(a).unwrap();
+    //    watcher.watch(self.root, RecursiveMode::Recursive).unwrap();
+    //    b.recv().unwrap()
+    //}
 }
 
 fn main() {
@@ -126,9 +142,29 @@ fn main() {
     // we have nodes from path?
     let nodes = match FileNodes::new(path.to_str().unwrap(), ignore) {
         Ok(nodes) => {
-            println!("given : {:?} {:#?}", path, nodes)
+            //             println!("Built for wathching: {:?} {:#?}", path, node);
+            //  Watching part
+            let (a, b) = channel();
+            let mut watcher = raw_watcher(a).unwrap();
+
+            println!("Watching {:?}", path);
+            watcher.watch(path, RecursiveMode::Recursive).unwrap();
+            loop {
+                match b.recv() {
+                    Ok(RawEvent {
+                        path: Some(path),
+                        op: Ok(op),
+                        cookie,
+                    }) => {
+                        println!("{:?} {:?} ({:?})", op, path, cookie);
+                        println!("{:#?}", nodes);
+                    }
+                    Ok(event) => println!("broken event: {:?}", event),
+                    Err(e) => println!("watch error: {:?}", e),
+                }
+            }
         }
-        Err(err) => eprintln!("could not unpack certain Node/s: Err: {:?}", err),
+        Err(err) => eprintln!("could not unpack certain Node/s | Err: {:?}", err),
     };
     nodes
 }
