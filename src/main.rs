@@ -4,9 +4,11 @@ use clap::{
     crate_name,
     crate_version,
     App,
+    AppSettings,
     Arg,
 };
 
+use regex::Regex;
 use std::collections::HashMap;
 use std::default::Default;
 use std::env;
@@ -62,13 +64,20 @@ pub struct FileNodes {
 }
 
 impl FileNodes {
-    pub fn new(path: &str) -> Self {
+    pub fn new(path: &str, ignore: regex::Regex) -> Self {
         let mut f: FileNodes = Default::default();
         let mut nodes = HashMap::new();
         for entry in WalkDir::new(path) {
             let entry = entry.unwrap();
-            let path = entry.path().display().to_string();
-            nodes.insert(path, FileNode::new(entry.to_owned()));
+            if !ignore.is_match(entry.path().display().to_string().as_ref()) {
+                let path = entry.path().display().to_string();
+                nodes.insert(path, FileNode::new(entry.to_owned()));
+            } else {
+                println!(
+                    "Skipping based on ignore patttern: {:?} {:?}",
+                    ignore, entry,
+                );
+            }
         }
         f.nodes = nodes;
         f
@@ -77,6 +86,7 @@ impl FileNodes {
 
 fn main() {
     let opts = App::new(crate_name!())
+        .setting(AppSettings::ArgRequiredElseHelp)
         .version(crate_version!())
         .author(crate_authors!())
         .about(crate_description!())
@@ -84,9 +94,17 @@ fn main() {
             Arg::with_name("path")
                 .short("p")
                 .long("path")
-                .takes_value(true)
                 .default_value(".")
+                .takes_value(true)
                 .help("Path to file or dir to keep watch in"),
+        )
+        .arg(
+            Arg::with_name("ignore")
+                .short("i")
+                .long("ignore")
+                .takes_value(true)
+                .default_value(r"^\..*")
+                .help(r"Ignore certain files using a defined regex pattern"),
         )
         .get_matches();
 
@@ -97,7 +115,13 @@ fn main() {
             .unwrap_or_else(|_| panic!("Cannot find the path given: {}", path)),
     };
 
-    let file_nodes = FileNodes::new(path.to_str().unwrap());
+    let ignore = match opts.value_of("ignore").unwrap() {
+        pattern => Regex::new(pattern).unwrap(),
+    };
 
+    println!("{:?}", ignore);
+    let file_nodes = FileNodes::new(path.to_str().unwrap(), ignore);
     println!("given : {:?} {:?}", path, file_nodes);
 }
+
+// TODO: write tests
