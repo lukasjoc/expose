@@ -79,7 +79,6 @@ void insert(hashmap *hm, int key) {
   hm->buckets[index] = p;
 }
 
-
 //int get(hashmap *hm, *key) {
 //  
 //}

@@ -27,3 +27,5 @@ if __name__ == "__main__":
     # return again with normal finding
     assert binary_search(l, 7) == 1
 
+    assert(binary_search(l, 10) == 3)
+

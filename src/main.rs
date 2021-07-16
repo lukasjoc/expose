@@ -84,12 +84,13 @@ impl FileNodes {
             if !ignore.is_match(entry.file_name().to_str().unwrap()) {
                 let path = entry.path().display().to_string();
                 nodes.insert(path, FileNode::new(entry.to_owned()));
-            } else {
-                println!(
-                    "Skipping based on ignore patttern: {:?} {:?}",
-                    ignore, entry,
-                );
             }
+            //else {
+            //    println!(
+            //        "Skipping based on ignore patttern: {:?} {:?}",
+            //        ignore, entry,
+            //    );
+            //}
         }
         f.nodes = nodes;
         Ok(f)
@@ -140,33 +141,40 @@ fn main() {
     };
 
     // we have nodes from path?
-    let nodes = match FileNodes::new(path.to_str().unwrap(), ignore) {
-        Ok(nodes) => {
-            //             println!("Built for wathching: {:?} {:#?}", path, node);
-            //  Watching part
-            let (a, b) = channel();
-            let mut watcher = raw_watcher(a).unwrap();
+    // TODO: somehow give this all the paths it can search in
+    // multiple wathers?
+    // TODO: Ok(), Err() Handling
+    let nodes = FileNodes::new(path.to_str().unwrap(), ignore)
+        .unwrap()
+        .nodes;
 
-            println!("Watching {:?}", path);
-            watcher.watch(path, RecursiveMode::Recursive).unwrap();
-            loop {
-                match b.recv() {
-                    Ok(RawEvent {
-                        path: Some(path),
-                        op: Ok(op),
-                        cookie,
-                    }) => {
-                        println!("{:?} {:?} ({:?})", op, path, cookie);
-                        println!("{:#?}", nodes);
-                    }
-                    Ok(event) => println!("broken event: {:?}", event),
-                    Err(e) => println!("watch error: {:?}", e),
-                }
+    // dec a new channel for communication
+    let (head, tail) = channel();
+
+    let mut watcher = raw_watcher(head).unwrap();
+    let mut watchers = Vec::new();
+    for path in nodes.keys() {
+        watchers.push(
+            watcher
+                .watch(path, RecursiveMode::Recursive)
+                .map_err(|e| format!("Err: {}", e)),
+        );
+    }
+    loop {
+        match tail.recv() {
+            Ok(RawEvent {
+                path: Some(path),
+                op: Ok(op),
+                cookie,
+            }) => {
+                println!("{:?}", path);
+
+                // println!("{:?} {:?} ({:?})", op, path, cookie);
             }
+            Ok(event) => println!("broken event: {:?}", event),
+            Err(e) => println!("watch error: {:?}", e),
         }
-        Err(err) => eprintln!("could not unpack certain Node/s | Err: {:?}", err),
-    };
-    nodes
+    }
 }
 
 // TODO: write tests

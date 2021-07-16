@@ -8,18 +8,18 @@ import (
 	"strings"
 )
 
-// runes keeps track of the letters currently in test for an isogram
-var runes []rune
+// runeslice keeps track of the letters currently in test for an isogram
+var runeslice []rune
 
 // IsIsogram determines if a given string "input" is an isogram or not returning
 // boolish with the result true for: is isogram , false for: is not isogram
 func IsIsogram(input string) bool {
-	runes = nil
+	runeslice = nil
 	for _, l := range strings.ToUpper(input) {
-		if find(runes, l) {
+		if find(runeslice, l) {
 			return false
 		}
-		runes = append(runes, l)
+		runeslice = append(runeslice, l)
 	}
 	return true
 }
@@ -43,7 +43,6 @@ func main() {
 	longest := IsIsogram("subdermatoglyphic") // expected: true
 	eleven := IsIsogram("eleven")             // expected: false
 
-	// PRINT RESULTS----------------------------------------------------
 	fmt.Printf("string: isogram, expected: true, got: %v \n", isogram)
 	fmt.Printf("string: iisogram, expected: false, got: %v \n", iisogram)
 	fmt.Printf("string: '', expected: true, got: %v \n", emty)
@@ -51,5 +50,4 @@ func main() {
 	fmt.Printf("string: qa-g frx ywc, expected: true, got: %v \n", wow)
 	fmt.Printf("string: subdermatoglyphic, expected: true, got: %v \n", longest)
 	fmt.Printf("string: eleven, expected: false, got: %v \n", eleven)
-	// -----------------------------------------------------------------
 }
