@@ -51,3 +51,5 @@ func main() {
 	fmt.Printf("string: subdermatoglyphic, expected: true, got: %v \n", longest)
 	fmt.Printf("string: eleven, expected: false, got: %v \n", eleven)
 }
+
+// rust is soo cool
