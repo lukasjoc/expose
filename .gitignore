@@ -4,4 +4,5 @@
 .DS_Store
 tags
 # Added by cargo
-/target
+/target/
+testingdir/
