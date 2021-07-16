@@ -1,0 +1,67 @@
+given : "/Users/jochamlu/fun/expose/src" FileNodes {
+    nodes: {
+        "/Users/jochamlu/fun/expose/src/watch.rs": FileNode {
+            path: "/Users/jochamlu/fun/expose/src/watch.rs",
+            name: "watch.rs",
+            is_dir: false,
+            is_file: true,
+            is_link: false,
+            depth: 1,
+            file_size: 523,
+            modified: SystemTime {
+                tv_sec: 1625955164,
+                tv_nsec: 319325508,
+            },
+            accessed: SystemTime {
+                tv_sec: 1625998339,
+                tv_nsec: 485722721,
+            },
+            created: SystemTime {
+                tv_sec: 1625955164,
+                tv_nsec: 319201702,
+            },
+        },
+        "/Users/jochamlu/fun/expose/src/main.rs": FileNode {
+            path: "/Users/jochamlu/fun/expose/src/main.rs",
+            name: "main.rs",
+            is_dir: false,
+            is_file: true,
+            is_link: false,
+            depth: 1,
+            file_size: 3779,
+            modified: SystemTime {
+                tv_sec: 1626005468,
+                tv_nsec: 722439055,
+            },
+            accessed: SystemTime {
+                tv_sec: 1626005469,
+                tv_nsec: 68985269,
+            },
+            created: SystemTime {
+                tv_sec: 1626005468,
+                tv_nsec: 722368079,
+            },
+        },
+        "/Users/jochamlu/fun/expose/src": FileNode {
+            path: "/Users/jochamlu/fun/expose/src",
+            name: "src",
+            is_dir: true,
+            is_file: false,
+            is_link: false,
+            depth: 0,
+            file_size: 128,
+            modified: SystemTime {
+                tv_sec: 1626005468,
+                tv_nsec: 722981880,
+            },
+            accessed: SystemTime {
+                tv_sec: 1626005470,
+                tv_nsec: 921432900,
+            },
+            created: SystemTime {
+                tv_sec: 1625945293,
+                tv_nsec: 473747744,
+            },
+        },
+    },
+}

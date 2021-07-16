@@ -2,3 +2,15 @@ expose
 ---
 Listen for File Changes on a system
 
+
+Help:
+---
+
+How can I use the ignore flag to exclude some dirs and files?
+
+Ignoring Files And Directories using RegEx Patterns:
+ - Ignore single files types ^.*.json$
+ - Ignore multiple files types ^.*.(json|toml)$
+ - Ingore hidden files and directories ^\..*$
+ - And much more...
+

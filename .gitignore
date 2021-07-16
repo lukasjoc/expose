@@ -3,11 +3,5 @@
 .netrwhist
 .DS_Store
 tags
-testdocs/
-test/
-
-
 # Added by cargo
-
 /target
-a/
